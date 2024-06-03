@@ -1,5 +1,5 @@
-.gradle
-build/
+/.gradle
+/build
 !../../../../projects/demo/demo/untitled-for-gradle-dump/gradle/wrapper/gradle-wrapper.jar
 !/src/main//build/
 !/src/test//build/
@@ -14,3 +14,4 @@ out/
 !**/src/main/**/out/
 !**/src/test/**/out/
 
+telegram_*.log
