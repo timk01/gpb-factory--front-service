@@ -1,0 +1,92 @@
+openapi: 3.1.0
+info:
+  title: GPB IT Factory Mini-Bank (backend)
+  version: 0.0.1
+paths:
+  /users:
+    post:
+      summary: Создать нового пользователя
+      tags: [users]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUserRequest'
+      responses:
+        '204':
+          description: Пользователь создан
+        default:
+          description: Непредвиденная ошибка
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /users/{id}:
+    get:
+      summary: Получить пользователя по идентификатору в Telegram
+      tags: [users]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 467385
+          description: Идентификатор искомого пользователя
+      responses:
+        '200':
+          description: Данные о пользователе
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        default:
+          description: Непредвиденная ошибка
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  schemas:
+    CreateUserRequest:
+      type: object
+      description: Запрос на создание нового пользователя
+      properties:
+        userId:
+          description: Идентификатор пользователя в Telegram
+          type: integer
+          format: int64
+          example: 348741706
+    UserResponse:
+      type: object
+      description: Информация о пользователе
+      properties:
+        userId:
+          description: Идентификатор пользователя в backend-сервисе
+          type: string
+          format: uuid
+          example: 2d7b7a7a-680e-422e-9cc3-23c68e2ff398
+    Error:
+      type: object
+      description: Формат непредвиденной ошибки
+      properties:
+        message:
+          type: string
+          example: Произошло что-то ужасное, но станет лучше, честно
+        type:
+          type: string
+          example: GeneralError
+        code:
+          type: string
+          example: '123'
+        trace_id:
+          type: string
+          format: uuid
+          example: 5f59e024-03c7-498d-9fc9-b8b15fd49c47
+tags:
+  - name: users
+    description: Операции с пользователями

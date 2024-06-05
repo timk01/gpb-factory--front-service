@@ -22,9 +22,9 @@ public class BotInitializer {
         TelegramBotsApi telegramBotsApi = new TelegramBotsApi(DefaultBotSession.class);
         try {
             telegramBotsApi.registerBot(bot);
-            log.info("Запуск бота успешен");
+            log.info("Bot is launched");
         } catch (TelegramApiException e) {
-            log.error("Запуск бота не удался: " + e.getMessage());
+            log.error("Something is wrong with bot launch: " + e.getMessage());
         }
     }
 }

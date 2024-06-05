@@ -101,10 +101,10 @@ deactivate Telegram
 
 * Собрать проект в готовый к исполнению файл   
   ````gradle build````  (если есть установленный грэдл)
-    + ИЛИ же ````gradlew build````  (если Windows и грэдла нет)
+    + ИЛИ же ````.\gradlew build````  (если Windows и грэдла нет)
     + ИЛИ же ````chmod +x gradlew```` ````./gradlew build```` (если Linux и грэдла нет)
 * Запустить его с параметрами:  
-  ````java -jar ./build/libs/khasmamedov-telegram-bot-0.0.1-SNAPSHOT.jar --bot.token="здесь ваш токен>"````  
+  ````java -jar ./build/libs/khasmamedov-telegram-bot-0.0.1-SNAPSHOT.jar --bot.token="здесь ваш токен"````  
   <span title="_, где после команды -jar идет путь (полный или относительный) до сборки; обычно это build/libs/_">примечание про пути</span>
 * ИЛИ же - запуск проекта "под ключ":  
   ````.\gradlew.bat bootRun --args='--bot.token=<здесь ваш токен>' ```` (Windows)    
@@ -122,13 +122,14 @@ deactivate Telegram
 * Если у вас еще нет докера, нужно его скачать:  
   [ссылка на докер](https://docs.docker.com/get-docker/)
 * Создать в докере image (посмотреть docker -> images в системе)  
-  `docker build -t middle-service .`
+  `docker build -t telegram-bot .`  
+  <span title="если вы видите ошибку типа `ERROR [build 5/5] RUN ./gradlew build --no-daemon --stacktrace --info`, вам нужно будет запустить `gradle wrapper` и когда она пройдет - перезапустить сборку">возможная ошибка сборки</span>  
 * Запустить приложение:
     + В фоновом режиме:  
       `docker run --name telegram-bot -d -e BOT_TOKEN="здесь ваш токен" telegram-bot`  
       _чтобы выйти в этом случае - набрать в терминале: `docker stop telegram-bot`_
     + С отображением результатов работы программы, включая логи и возможные ошибки:
-      `docker run --name telegram-bot -it -e bot.token="здесь ваш токен" telegram-bote`  
+      `docker run --name telegram-bot -it -e bot.token="здесь ваш токен" telegram-bot`  
       <span title="_ctrl+c, чтобы выйти из приложения в данном случае_">выход из приложения</span>
       <span title="_Если вы видите ошибку типа `docker: Error response from daemon: Conflict. The container name "/имя контейнера" is already in use by container "длинное имя". You have to remove (or rename) that container to be able to reuse that name.`,  
       вам потребуется остановить это контейнер перед тем как запускать программу:  
@@ -144,20 +145,62 @@ deactivate Telegram
 ### Команды_бота
 
 <details>
-  <summary>Список команд бота на настоящий момент в формате <code> вопрос -> ответ</code>: </summary>
+  <summary>Список команд бота на настоящий момент</code>: </summary>
 
-* /ping -> pong  
-* /help -> no help for you now, use '/ping' command instead  
+<details>
+  <summary>Обычные текстовые команды (echo-like, вопрос -> ответ)</summary>
+
+* /ping -> pong
+* /help -> no help for you now, use '/ping' command instead
 * любая иная команда -> where is no place like home
+
+</details>
+
+<details>
+  <summary>Команды пользователя с полным функционалом</summary>
+
+<details>
+  <summary>Регистрация</summary>
+
+1) Создать нового пользователя    
++ Ввести `/register` в ТГ-боте  
+- Ответ в случае успеха: `Пользователь создан`  
+- Ответ в случае неудачи: `Не могу зарегистрировать пользователя, статус: XXX`, где XXX - состояние ошибки
+- Ошибка создания пользователя  
+2) Получить пользователя по идентификатору в Telegram
+_пока не реализовано_
+
+</details>
+
+<details>
+  <summary>Счета (_пока не реализовано_)</summary>
+
+1) Открыть новый счёт для пользователя
+2) Получить счета пользователя
+
+</details>
+
+</details>
+
+<details>
+  <summary>Переводы (_пока не реализовано_)</summary>
+
+1) Создать перевод со счёта пользователя на счёт другого пользователя
+
+</details>
+
+
 
 </details>
 
   
 <br>
 
-!!!!! // Доделать ./gradlew build -x test в экшнс (смотри миддл) 
+//Todo в этой ветке (отдельные задачи не нужны, относятся напрямую к заданию)
 
-//todo, low-mid priority
-//Вероятно,     public Map<String, Command> commandMsg() { с     public Map<String, Command> commandMsg() { 
-//и нафиг не нужно
+//1. все ручные тесты по запуску индивидуально (пока только зеленой кнопочкой вышло)
+//(чудеса с консолью при rgadleW - не тестил бутран и докер, но по идее то же самое)
+//2. компоуз
+//4. апдейт ридми - частично уже есть + (команды), сдвигаю на низ, после докера апдейт
+//- вероятно дополнительные тесты (экс 3) 
 
