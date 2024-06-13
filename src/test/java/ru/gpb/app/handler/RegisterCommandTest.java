@@ -6,6 +6,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.telegram.telegrambots.meta.api.objects.Message;
+import org.telegram.telegrambots.meta.api.objects.User;
 import ru.gpb.app.dto.CreateUserRequest;
 import ru.gpb.app.service.RegistrationService;
 
@@ -37,10 +38,13 @@ class RegisterCommandTest {
     @Test
     public void executeCommandRunsFine() {
         Message mockedMessage = mock(Message.class);
+        User mockedUser = mock(User.class);
 
         when(mockedMessage.getChatId()).thenReturn(123L);
+        when(mockedMessage.getFrom()).thenReturn(mockedUser);
+        when(mockedUser.getUserName()).thenReturn("Khasmamedov");
 
-        CreateUserRequest request = new CreateUserRequest(mockedMessage.getChatId());
+        CreateUserRequest request = new CreateUserRequest(mockedMessage.getChatId(), "Khasmamedov");
         when(registrationService.register(request)).thenReturn("Success");
 
         String result = command.executeCommand(mockedMessage);

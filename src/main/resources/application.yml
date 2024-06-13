@@ -3,7 +3,7 @@ bot:
   token: ${BOT_TOKEN}
 
 khasmamedov-middle-service:
-  url: http://localhost:8081/api
+  url: http://localhost:8081/v2/api
 
 server:
   servlet:

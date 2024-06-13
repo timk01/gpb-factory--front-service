@@ -24,7 +24,7 @@ public class RegistrationService {
 
     public String register(CreateUserRequest request) {
         try {
-            log.info("Registry used by userID: {}", request.userId());
+            log.info("Registry used by userID: {} and userName: {}", request.userId(), request.userName());
             ResponseEntity<Void> response = restTemplate.postForEntity("/users", request, Void.class);
             return handleResponse(response);
         } catch (HttpStatusCodeException e) {
