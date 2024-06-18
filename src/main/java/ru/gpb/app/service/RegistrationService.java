@@ -22,6 +22,12 @@ public class RegistrationService {
         this.restTemplate = restTemplate;
     }
 
+    /**
+     * Despite the fact controller of  B service returns general error, i decided to put here one more specific
+     * exception handler - see handleHttpStatusCodeException
+     * @param request of CreateUserRequest type
+     * @return readable by user String (i include specifics only in logs and omit them in returned value)
+     */
     public String register(CreateUserRequest request) {
         try {
             log.info("Registry used by userID: {} and userName: {}", request.userId(), request.userName());
@@ -34,23 +40,27 @@ public class RegistrationService {
         }
     }
 
-    private String handleResponse(ResponseEntity<Void> response) {
+    public String handleResponse(ResponseEntity<Void> response) {
         HttpStatus statusCode = response.getStatusCode();
         if (statusCode == HttpStatus.NO_CONTENT) {
             log.info("User is created");
             return "Пользователь создан";
+        } else if (statusCode == HttpStatus.CONFLICT) {
+            log.warn("User is already exists: " + response.getBody());
+            return "Пользователь уже зарегистрирован: " + statusCode;
+        } else {
+            log.error("Cannot create user, status: " + response.getBody());
+            return "Ошибка при регистрации пользователя: " + statusCode;
         }
-        log.error("Cannot create user, status: " + statusCode);
-        return "Непредвиденная ошибка: " + statusCode;
     }
 
-    private String handleHttpStatusCodeException(HttpStatusCodeException e) {
+    public String handleHttpStatusCodeException(HttpStatusCodeException e) {
         String responseErrorString = new String(e.getResponseBodyAsByteArray(), StandardCharsets.UTF_8);
         log.error("Cannot register, HttpStatusCodeException: " + responseErrorString);
         return "Не могу зарегистрировать, ошибка: " + responseErrorString;
     }
 
-    private String handleGeneralException(Exception e) {
+    public String handleGeneralException(Exception e) {
         String generalErrorMessage = e.getMessage();
         log.error("Serious exception is happened: " + generalErrorMessage, e);
         return "Произошла серьезная ошибка: " + generalErrorMessage;

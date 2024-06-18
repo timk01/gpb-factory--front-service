@@ -43,7 +43,7 @@ class RegistrationServiceTest {
     }
 
     @Test
-    public void registerResponseIsOKAndReturnedCodeIsGood() {
+    public void registerIsSuccessful() {
         when(restTemplate.postForEntity("/users", properRequestId, Void.class))
                 .thenReturn(new ResponseEntity<>(HttpStatus.NO_CONTENT));
 
@@ -55,7 +55,19 @@ class RegistrationServiceTest {
     }
 
     @Test
-    public void registerResponseIsOKAndReturnedCodeIsBad() {
+    public void registerIsAlreadyDoneBefore() {
+        when(restTemplate.postForEntity("/users", properRequestId, Void.class))
+                .thenReturn(new ResponseEntity<>(HttpStatus.CONFLICT));
+
+        String result = service.register(properRequestId);
+
+        assertThat("Пользователь уже зарегистрирован: " + HttpStatus.CONFLICT).isEqualTo(result);
+        verify(restTemplate, times(1))
+                .postForEntity("/users", properRequestId, Void.class);
+    }
+
+    @Test
+    public void registerProcessCannotBeDone() {
         @SuppressWarnings("unchecked")
         ResponseEntity<Void> response = mock(ResponseEntity.class);
         when(response.getStatusCode()).thenReturn(HttpStatus.BAD_REQUEST);
@@ -64,13 +76,13 @@ class RegistrationServiceTest {
 
         String result = service.register(improperRequestId);
 
-        assertThat("Непредвиденная ошибка: " + response.getStatusCode()).isEqualTo(result);
+        assertThat("Ошибка при регистрации пользователя: " + response.getStatusCode()).isEqualTo(result);
         verify(restTemplate, times(1))
                 .postForEntity("/users", improperRequestId, Void.class);
     }
 
     @Test
-    public void registerResponseInvokedInternalServerException() {
+    public void registerInvokedInternalServerException() {
         Error userCreationError = new Error(
                 "Ошибка регистрации пользователя",
                 "UserCreationError",
@@ -99,7 +111,7 @@ class RegistrationServiceTest {
     }
 
     @Test
-    public void registerResponseInvokedGeneralException() {
+    public void registerInvokedGeneralException() {
         Error userCreationError = new Error(
                 "Произошло что-то ужасное, но станет лучше, честно",
                 "GeneralError",
