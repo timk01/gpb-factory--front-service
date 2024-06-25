@@ -3,15 +3,15 @@ package ru.gpb.app.handler;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import ru.gpb.app.dto.CreateUserRequest;
-import ru.gpb.app.service.RegistrationService;
+import ru.gpb.app.service.UserService;
 
 @Component
-public class RegisterCommand implements Command {
+public class RegisterUserCommand implements Command {
 
-    private final RegistrationService registrationService;
+    private final UserService userService;
 
-    public RegisterCommand(RegistrationService registrationService) {
-        this.registrationService = registrationService;
+    public RegisterUserCommand(UserService userService) {
+        this.userService = userService;
     }
 
     @Override
@@ -27,7 +27,7 @@ public class RegisterCommand implements Command {
     @Override
     public String executeCommand(Message message) {
         CreateUserRequest request = new CreateUserRequest(message.getChatId(), message.getFrom().getUserName());
-        return registrationService.register(request);
+        return userService.register(request);
     }
 }
 

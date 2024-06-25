@@ -25,6 +25,12 @@ class OutcomingHandlerImplTest {
     @Mock
     private Command command;
 
+    @Mock
+    RegisterUserCommand registerUserCommand;
+
+    @Mock
+    CreateAccountCommand createAccountCommand;
+
     private Message mockedMessage;
 
     private Map<String, Command> messageMap;
@@ -50,18 +56,53 @@ class OutcomingHandlerImplTest {
         mockedMessage = mock(Message.class);
         messageMap = new HashMap<>();
         messageMap.put("ALL_GOOD", command);
+        messageMap.put("/register", registerUserCommand);
+        messageMap.put("/createaccount", createAccountCommand);
         when(commandeer.commandMsg()).thenReturn(messageMap);
 
         handler = new OutcomingHandlerImpl(commandeer);
     }
 
     @Test
-    public void outputtingMessageSenderHasCommand() {
+    public void registerUserCommandWasHandledProperly() {
+        when(mockedMessage.getText()).thenReturn("/register");
+        when(mockedMessage.getChatId()).thenReturn(123L);
+
+        when(messageMap.get("/register").executeCommand(mockedMessage)).thenReturn("Пользователь создан");
+
+        SendMessage expectedSendMessage = SendMessage.builder()
+                .chatId(mockedMessage.getChatId().toString())
+                .text("Пользователь создан")
+                .build();
+
+        SendMessage result = handler.outputtingMessageSender(mockedMessage);
+
+        assertThat(result).isEqualTo(expectedSendMessage);
+    }
+
+    @Test
+    public void createAccountCommandWasHandledProperly() {
+        when(mockedMessage.getText()).thenReturn("/createaccount");
+        when(mockedMessage.getChatId()).thenReturn(123L);
+
+        when(messageMap.get("/createaccount").executeCommand(mockedMessage)).thenReturn("Счет создан");
+
+        SendMessage expectedSendMessage = SendMessage.builder()
+                .chatId(mockedMessage.getChatId().toString())
+                .text("Счет создан")
+                .build();
+
+        SendMessage result = handler.outputtingMessageSender(mockedMessage);
+
+        assertThat(result).isEqualTo(expectedSendMessage);
+    }
+
+    @Test
+    public void outputtingMessageSenderHadCommand() {
         when(mockedMessage.getText()).thenReturn("ALL_GOOD");
         when(mockedMessage.getChatId()).thenReturn(123L);
 
         when(messageMap.get("ALL_GOOD").executeCommand(mockedMessage)).thenReturn("GOOD_RESPONSE");
-        String mockedResponse = messageMap.get("ALL_GOOD").executeCommand(mockedMessage);
 
         SendMessage expectedSendMessage = SendMessage.builder()
                 .chatId(mockedMessage.getChatId().toString())
@@ -74,7 +115,7 @@ class OutcomingHandlerImplTest {
     }
 
     @Test
-    public void outputtingMessageSenderHasNoCommand() {
+    public void outputtingMessageSenderHadNoCommand() {
         when(mockedMessage.getText()).thenReturn("NO_COMMAND");
         when(mockedMessage.getChatId()).thenReturn(123L);
 
