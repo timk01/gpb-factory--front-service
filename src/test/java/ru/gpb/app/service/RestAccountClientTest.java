@@ -10,7 +10,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
+import ru.gpb.app.dto.AccountListResponse;
 import ru.gpb.app.dto.CreateAccountRequest;
+
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -26,18 +29,23 @@ class RestAccountClientTest {
     @InjectMocks
     private RestAccountClient accountClient;
 
+    private Long userId;
+
     private CreateAccountRequest accountRequest;
 
     private String url;
+    private String gettingAccUrl;
 
     @BeforeEach
     public void setUp() {
+        userId = 868047670L;
         accountRequest = new CreateAccountRequest(
-                123L,
+                userId,
                 "Khasmamedov",
                 "My first awesome account"
         );
         url = String.format("/users/%d/accounts", accountRequest.userId());
+        gettingAccUrl = String.format("/users/%d/accounts", userId);
     }
 
     @Test
@@ -51,6 +59,24 @@ class RestAccountClientTest {
     }
 
     @Test
+    public void gettingAccountsWasOK() {
+        AccountListResponse[] accounts = new AccountListResponse[]{
+                new AccountListResponse(
+                        UUID.randomUUID(),
+                        "Деньги на шашлык",
+                        "203605.20"
+                )
+        };
+        ResponseEntity<AccountListResponse[]> responseEntity = new ResponseEntity<>(accounts, HttpStatus.OK);
+        when(restTemplate.getForEntity(gettingAccUrl, AccountListResponse[].class))
+                .thenReturn(responseEntity);
+
+        ResponseEntity<AccountListResponse[]> result = accountClient.getAccount(userId);
+
+        assertThat(responseEntity).isEqualTo(result);
+    }
+
+    @Test
     public void openAccountWasAlreadyDoneBefore() {
         when(restTemplate.postForEntity(url, accountRequest, Void.class))
                 .thenReturn(new ResponseEntity<>(HttpStatus.NO_CONTENT));
@@ -58,6 +84,18 @@ class RestAccountClientTest {
         ResponseEntity<Void> result = accountClient.openAccount(accountRequest);
 
         assertThat(HttpStatus.NO_CONTENT).isEqualTo(result.getStatusCode());
+    }
+
+    @Test
+    public void gettingAccountsReturnedNoData() {
+        AccountListResponse[] accounts = {};
+        ResponseEntity<AccountListResponse[]> responseEntity = new ResponseEntity<>(accounts, HttpStatus.OK);
+        when(restTemplate.getForEntity(gettingAccUrl, AccountListResponse[].class))
+                .thenReturn(responseEntity);
+
+        ResponseEntity<AccountListResponse[]> result = accountClient.getAccount(userId);
+
+        assertThat(accounts).isEqualTo(result.getBody());
     }
 
     @Test
@@ -75,6 +113,17 @@ class RestAccountClientTest {
     }
 
     @Test
+    public void gettingAccountProcessCouldNotBeDone() {
+        ResponseEntity<AccountListResponse[]> responseEntity = new ResponseEntity<>(null, HttpStatus.OK);
+        when(restTemplate.getForEntity(gettingAccUrl, AccountListResponse[].class))
+                .thenReturn(responseEntity);
+
+        ResponseEntity<AccountListResponse[]> result = accountClient.getAccount(userId);
+
+        assertThat(result.getBody()).isNull();
+    }
+
+    @Test
     public void openAccountInvokedInternalServerException() {
         when(restTemplate.postForEntity(url, accountRequest, Void.class))
                 .thenThrow(new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR));
@@ -83,10 +132,25 @@ class RestAccountClientTest {
     }
 
     @Test
+    void getAccountInvokedInternalServerException() {
+        when(restTemplate.getForEntity(gettingAccUrl, AccountListResponse[].class))
+                .thenThrow(new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR));
+
+        assertThrows(HttpServerErrorException.class, () -> accountClient.getAccount(userId));
+    }
+
+    @Test
     public void openAccountInvokedInvokedGeneralException() {
         when(restTemplate.postForEntity(url, accountRequest, Void.class))
                 .thenThrow(new RuntimeException());
 
         assertThrows(RuntimeException.class, () -> accountClient.openAccount(accountRequest));
+    }
+    @Test
+    void getAccountInvokedInvokedGeneralException() {
+        when(restTemplate.getForEntity(gettingAccUrl, AccountListResponse[].class))
+                .thenThrow(new RuntimeException());
+
+        assertThrows(RuntimeException.class, () -> accountClient.getAccount(userId));
     }
 }

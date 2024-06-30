@@ -12,10 +12,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.HttpStatusCodeException;
+import ru.gpb.app.dto.AccountListResponse;
 import ru.gpb.app.dto.CreateAccountRequest;
 import ru.gpb.app.dto.Error;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -30,10 +32,13 @@ class AccountServiceTest {
     private AccountService service;
     private CreateAccountRequest accountRequest;
 
+    private Long userId;
+
     @BeforeEach
     public void setUp() {
+        userId = 868047670L;
         accountRequest = new CreateAccountRequest(
-                123L,
+                userId,
                 "Khasmamedov",
                 "My first awesome account"
         );
@@ -49,6 +54,26 @@ class AccountServiceTest {
     }
 
     @Test
+    public void gettingAccountsWasOK() {
+        AccountListResponse[] accounts = new AccountListResponse[]{
+                new AccountListResponse(
+                        UUID.randomUUID(),
+                        "Деньги на шашлык",
+                        "203605.20"
+                )
+        };
+        ResponseEntity<AccountListResponse[]> responseEntity = new ResponseEntity<>(accounts, HttpStatus.OK);
+        when(accountClient.getAccount(userId))
+                .thenReturn(responseEntity);
+
+        String result = service.getAccount(userId);
+
+        String expected = "Список счетов пользователя: " + Arrays.asList(accounts);
+
+        assertThat(expected).isEqualTo(result);
+    }
+
+    @Test
     public void registerAccountWasAlreadyDoneBefore() {
         when(accountClient.openAccount(accountRequest)).thenReturn(new ResponseEntity<>(HttpStatus.CONFLICT));
 
@@ -58,15 +83,37 @@ class AccountServiceTest {
     }
 
     @Test
+    public void gettingAccountsReturnedNoData() {
+        AccountListResponse[] accounts = {};
+        ResponseEntity<AccountListResponse[]> responseEntity = new ResponseEntity<>(accounts, HttpStatus.OK);
+        when(accountClient.getAccount(userId)).thenReturn(responseEntity);
+
+        String result = service.getAccount(userId);
+
+        assertThat("Нет счетов у пользователя").isEqualTo(result);
+    }
+
+    @Test
     public void registerAccountProcessCouldNotBeDone() {
         @SuppressWarnings("unchecked")
         ResponseEntity<Void> response = mock(ResponseEntity.class);
         when(response.getStatusCode()).thenReturn(HttpStatus.BAD_REQUEST);
-        when(accountClient.openAccount(accountRequest)).thenReturn(response);;
+        when(accountClient.openAccount(accountRequest)).thenReturn(response);
 
         String result = service.openAccount(accountRequest);
 
         assertThat("Ошибка при создании счета: " + response.getStatusCode()).isEqualTo(result);
+    }
+
+    @Test
+    public void gettingAccountProcessCouldNotBeDone() {
+        ResponseEntity<AccountListResponse[]> responseEntity = new ResponseEntity<>(null, HttpStatus.OK);
+        when(accountClient.getAccount(userId))
+                .thenReturn(responseEntity);
+
+        String result = service.getAccount(userId);
+
+        assertThat("Не могу получить счета (пустой ответ // не найдено счетов)").isEqualTo(result);
     }
 
     @Test
@@ -86,11 +133,37 @@ class AccountServiceTest {
                         jsonError.getBytes(StandardCharsets.UTF_8),
                         StandardCharsets.UTF_8
                 );
-        when(accountClient.openAccount(accountRequest)).thenThrow(httpStatusCodeException);;
+        when(accountClient.openAccount(accountRequest)).thenThrow(httpStatusCodeException);
 
         String result = service.openAccount(accountRequest);
 
         assertThat("Не могу зарегистрировать счет, ошибка: " + jsonError).isEqualTo(result);
+    }
+
+    @Test
+    void getAccountHandledHttpStatusCodeException() {
+        Error accountCreationError = new Error(
+                "Ошибка получения счета",
+                "AccountGettingError",
+                "500",
+                UUID.randomUUID()
+        );
+        String jsonError = convertErrorToJson(accountCreationError);
+        HttpStatusCodeException httpStatusCodeException =
+                new HttpServerErrorException(
+                        HttpStatus.INTERNAL_SERVER_ERROR,
+                        "Internal Server Error",
+                        null,
+                        jsonError.getBytes(StandardCharsets.UTF_8),
+                        StandardCharsets.UTF_8
+                );
+
+        when(accountClient.getAccount(userId))
+                .thenThrow(httpStatusCodeException);
+
+        String result = service.getAccount(userId);
+
+        assertThat("Не могу получить счета, ошибка: " + jsonError).isEqualTo(result);
     }
 
     @Test
@@ -110,6 +183,25 @@ class AccountServiceTest {
         String result = service.openAccount(accountRequest);
 
         assertThat("Произошла серьезная ошибка во время создания счета: " + jsonError).isEqualTo(result);
+    }
+
+    @Test
+    void getAccountHandledGeneralException() {
+        Error accountCreationError = new Error(
+                "Произошло что-то ужасное, но станет лучше, честно",
+                "GeneralError",
+                "123",
+                UUID.randomUUID()
+        );
+        String jsonError = convertErrorToJson(accountCreationError);
+        RuntimeException generalException =
+                new RuntimeException(jsonError);
+
+        when(accountClient.getAccount(userId)).thenThrow(generalException);;
+
+        String result = service.getAccount(userId);
+
+        assertThat("Произошла серьезная ошибка во время получения счетов: " + jsonError).isEqualTo(result);
     }
 
     public static String convertErrorToJson(Error error) {
