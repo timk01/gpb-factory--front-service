@@ -22,6 +22,7 @@ public class UserService {
     /**
      * Despite the fact controller of  B service returns general error, i decided to put here one more specific
      * exception handler - see handleHttpStatusCodeException
+     *
      * @param response<Void> of CreateUserRequest type
      * @return readable by user String (i include specifics only in logs and omit them in returned value)
      */
@@ -31,19 +32,22 @@ public class UserService {
         if (statusCode == HttpStatus.NO_CONTENT) {
             log.info("User is created");
             return "Пользователь создан";
-        } else if (statusCode == HttpStatus.CONFLICT) {
-            log.warn("User is already exists: " + response.getBody());
-            return "Пользователь уже зарегистрирован: " + statusCode;
-        } else {
-            log.error("Cannot create user, status: " + response.getBody());
-            return "Ошибка при регистрации пользователя: " + statusCode;
         }
+        log.error("Cannot create user, status: " + response.getBody());
+        return "Ошибка при регистрации пользователя: " + statusCode;
     }
 
     private String handleHttpStatusCodeException(HttpStatusCodeException e) {
+        String message;
         String responseErrorString = new String(e.getResponseBodyAsByteArray(), StandardCharsets.UTF_8);
-        log.error("Cannot register, HttpStatusCodeException: " + responseErrorString);
-        return "Не могу зарегистрировать, ошибка: " + responseErrorString;
+        if (e.getStatusCode() == HttpStatus.CONFLICT) {
+            log.error("User already exists: {}", responseErrorString);
+            message = "Пользователь уже зарегистрирован: " + HttpStatus.CONFLICT;
+        } else {
+            log.error("Cannot register, HttpStatusCodeException: " + responseErrorString);
+            message = "Не могу зарегистрировать пользователя, ошибка: " + responseErrorString;
+        }
+        return message;
     }
 
     private String handleGeneralException(Exception e) {

@@ -10,6 +10,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.HttpStatusCodeException;
 import ru.gpb.app.dto.CreateUserRequest;
@@ -55,13 +56,12 @@ class UserServiceTest {
     @Test
     public void registerUserWasAlreadyDoneBefore() {
         when(userClient.register(properRequestId))
-                .thenReturn(new ResponseEntity<>(HttpStatus.CONFLICT));
+                .thenThrow(new HttpClientErrorException(HttpStatus.CONFLICT));
 
         String result = service.register(properRequestId);
 
         assertThat("Пользователь уже зарегистрирован: " + HttpStatus.CONFLICT).isEqualTo(result);
     }
-
 
     @Test
     public void registerUserProcessCouldNotBeDone() {
@@ -100,7 +100,7 @@ class UserServiceTest {
 
         String result = service.register(wrongRequestId);
 
-        assertThat("Не могу зарегистрировать, ошибка: " + jsonError).isEqualTo(result);
+        assertThat("Не могу зарегистрировать пользователя, ошибка: " + jsonError).isEqualTo(result);
     }
 
     @Test

@@ -51,16 +51,6 @@ class RestUserClientTest {
     }
 
     @Test
-    public void registerUserWasAlreadyDoneBefore() {
-        when(restTemplate.postForEntity(url, properRequestId, Void.class))
-                .thenReturn(new ResponseEntity<>(HttpStatus.CONFLICT));
-
-        ResponseEntity<Void> result = userClient.register(properRequestId);
-
-        assertThat(HttpStatus.CONFLICT).isEqualTo(result.getStatusCode());
-    }
-
-    @Test
     public void registerUserCouldNotBeDone() {
         @SuppressWarnings("unchecked")
         ResponseEntity<Void> response = mock(ResponseEntity.class);
@@ -75,7 +65,7 @@ class RestUserClientTest {
     }
 
     @Test
-    public void openAccountInvokedInternalServerException() {
+    public void openUserInvokedInternalServerException() {
         when(restTemplate.postForEntity(url, wrongRequestId, Void.class))
                 .thenThrow(new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR));
 
@@ -83,7 +73,7 @@ class RestUserClientTest {
     }
 
     @Test
-    public void openAccountInvokedInvokedGeneralException() {
+    public void openUserInvokedInvokedGeneralException() {
         when(restTemplate.postForEntity(url, wrongRequestId, Void.class))
                 .thenThrow(new RuntimeException());
 

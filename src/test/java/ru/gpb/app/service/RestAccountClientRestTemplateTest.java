@@ -19,9 +19,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
 @ExtendWith(MockitoExtension.class)
-class RestAccountClientTest {
+class RestAccountClientRestTemplateTest {
 
     @Mock
     private RestTemplate restTemplate;
@@ -35,6 +34,7 @@ class RestAccountClientTest {
 
     private String url;
     private String gettingAccUrl;
+
 
     @BeforeEach
     public void setUp() {
@@ -74,16 +74,6 @@ class RestAccountClientTest {
         ResponseEntity<AccountListResponse[]> result = accountClient.getAccount(userId);
 
         assertThat(responseEntity).isEqualTo(result);
-    }
-
-    @Test
-    public void openAccountWasAlreadyDoneBefore() {
-        when(restTemplate.postForEntity(url, accountRequest, Void.class))
-                .thenReturn(new ResponseEntity<>(HttpStatus.NO_CONTENT));
-
-        ResponseEntity<Void> result = accountClient.openAccount(accountRequest);
-
-        assertThat(HttpStatus.NO_CONTENT).isEqualTo(result.getStatusCode());
     }
 
     @Test
@@ -132,7 +122,7 @@ class RestAccountClientTest {
     }
 
     @Test
-    void getAccountInvokedInternalServerException() {
+    public void getAccountInvokedInternalServerException() {
         when(restTemplate.getForEntity(gettingAccUrl, AccountListResponse[].class))
                 .thenThrow(new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR));
 
@@ -147,7 +137,7 @@ class RestAccountClientTest {
         assertThrows(RuntimeException.class, () -> accountClient.openAccount(accountRequest));
     }
     @Test
-    void getAccountInvokedInvokedGeneralException() {
+    public void getAccountInvokedInvokedGeneralException() {
         when(restTemplate.getForEntity(gettingAccUrl, AccountListResponse[].class))
                 .thenThrow(new RuntimeException());
 

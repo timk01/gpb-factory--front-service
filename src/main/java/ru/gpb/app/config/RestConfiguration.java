@@ -17,8 +17,8 @@ public class RestConfiguration {
         return builder
                 .rootUri(url)
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .setConnectTimeout(Duration.ofSeconds(5))
-                .setReadTimeout(Duration.ofSeconds(5))
+                .setConnectTimeout(Duration.ofSeconds(500))
+                .setReadTimeout(Duration.ofSeconds(500))
                 .build();
     }
 }

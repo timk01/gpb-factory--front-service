@@ -21,7 +21,11 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.telegram:telegrambots:6.9.7.1'
 
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.wiremock:wiremock-jetty12:3.6.0'
+	testImplementation 'com.github.tomakehurst:wiremock:2.27.2'
 
 	compileOnly 'org.projectlombok:lombok:1.18.32'
 	annotationProcessor 'org.projectlombok:lombok:1.18.32'

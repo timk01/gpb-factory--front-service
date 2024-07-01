@@ -10,10 +10,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.HttpStatusCodeException;
-import ru.gpb.app.dto.AccountListResponse;
-import ru.gpb.app.dto.CreateAccountRequest;
+import ru.gpb.app.dto.*;
 import ru.gpb.app.dto.Error;
 
 import java.nio.charset.StandardCharsets;
@@ -34,6 +34,8 @@ class AccountServiceTest {
 
     private Long userId;
 
+    private CreateTransferRequest transferRequest;
+
     @BeforeEach
     public void setUp() {
         userId = 868047670L;
@@ -42,6 +44,7 @@ class AccountServiceTest {
                 "Khasmamedov",
                 "My first awesome account"
         );
+        transferRequest = new CreateTransferRequest("Khasmamedov", "Durov", "100");
     }
 
     @Test
@@ -51,6 +54,16 @@ class AccountServiceTest {
         String result = service.openAccount(accountRequest);
 
         assertThat("Счет создан").isEqualTo(result);
+    }
+
+    @Test
+    public void registerAccountWasAlreadyDoneBefore() {
+        when(accountClient.openAccount(accountRequest))
+                .thenThrow(new HttpClientErrorException(HttpStatus.CONFLICT));
+
+        String result = service.openAccount(accountRequest);
+
+        assertThat("Счет уже зарегистрирован: " + HttpStatus.CONFLICT).isEqualTo(result);
     }
 
     @Test
@@ -74,18 +87,9 @@ class AccountServiceTest {
     }
 
     @Test
-    public void registerAccountWasAlreadyDoneBefore() {
-        when(accountClient.openAccount(accountRequest)).thenReturn(new ResponseEntity<>(HttpStatus.CONFLICT));
-
-        String result = service.openAccount(accountRequest);
-
-        assertThat("Такой счет у данного пользователя уже есть: " + HttpStatus.CONFLICT).isEqualTo(result);
-    }
-
-    @Test
     public void gettingAccountsReturnedNoData() {
         AccountListResponse[] accounts = {};
-        ResponseEntity<AccountListResponse[]> responseEntity = new ResponseEntity<>(accounts, HttpStatus.OK);
+        ResponseEntity<AccountListResponse[]> responseEntity = new ResponseEntity<>(accounts, HttpStatus.NO_CONTENT);
         when(accountClient.getAccount(userId)).thenReturn(responseEntity);
 
         String result = service.getAccount(userId);
@@ -202,6 +206,50 @@ class AccountServiceTest {
         String result = service.getAccount(userId);
 
         assertThat("Произошла серьезная ошибка во время получения счетов: " + jsonError).isEqualTo(result);
+    }
+
+    @Test
+    public void makeTransferWasSuccessful() {
+        CreateTransferResponse transferResponse = new CreateTransferResponse("12345");
+        when(accountClient.makeAccountTransfer(transferRequest))
+                .thenReturn(new ResponseEntity<>(transferResponse, HttpStatus.OK));
+
+        String result = service.makeAccountTransfer(transferRequest);
+
+        assertThat("Перевод успешно выполнен, ID: " + transferResponse.transferId()).isEqualTo(result);
+    }
+
+    @Test
+    public void makeTransferCouldNoBeDone() {
+        CreateTransferResponse transferResponse = new CreateTransferResponse("12345");
+        when(accountClient.makeAccountTransfer(transferRequest))
+                .thenReturn(new ResponseEntity<>(transferResponse, HttpStatus.CONFLICT));
+
+        String result = service.makeAccountTransfer(transferRequest);
+
+        assertThat("Не могу совершить денежный перевод: " + HttpStatus.CONFLICT).isEqualTo(result);
+    }
+
+    @Test
+    public void makeTransferGotHttpStatusCodeException() {
+        HttpStatusCodeException exception = new HttpStatusCodeException(HttpStatus.CONFLICT) {};
+        String responseErrorString = new String(exception.getResponseBodyAsByteArray(), StandardCharsets.UTF_8);
+        when(accountClient.makeAccountTransfer(transferRequest)).thenThrow(exception);
+
+        String result = service.makeAccountTransfer(transferRequest);
+
+        assertThat("Не могу выполнить денежный перевод, ошибка: " + responseErrorString).isEqualTo(result);
+    }
+
+    @Test
+    public void makeTransferGotGeneralException() {
+        Exception exception = new RuntimeException("Error");
+        when(accountClient.makeAccountTransfer(transferRequest)).thenThrow(exception);
+
+        String result = service.makeAccountTransfer(transferRequest);
+
+        assertThat("Произошла серьезная ошибка во время выполнения денежного перевода: " + exception.getMessage()
+        ).isEqualTo(result);
     }
 
     public static String convertErrorToJson(Error error) {

@@ -5,6 +5,7 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import ru.gpb.app.dto.CreateAccountRequest;
 import ru.gpb.app.service.AccountService;
 
+@ExpectedCommandParams(0)
 @Component
 public class CreateAccountCommand implements Command {
 
@@ -20,7 +21,7 @@ public class CreateAccountCommand implements Command {
     }
 
     @Override
-    public String executeCommand(Message message) {
+    public String executeCommand(Message message, String... params) {
         CreateAccountRequest accountRequest = new CreateAccountRequest(
                 message.getChatId(),
                 message.getFrom().getUserName(),

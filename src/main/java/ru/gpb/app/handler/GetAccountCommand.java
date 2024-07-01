@@ -3,7 +3,7 @@ package ru.gpb.app.handler;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import ru.gpb.app.service.AccountService;
-
+@ExpectedCommandParams(0)
 @Component
 public class GetAccountCommand implements Command {
 
@@ -19,7 +19,7 @@ public class GetAccountCommand implements Command {
     }
 
     @Override
-    public String executeCommand(Message message) {
+    public String executeCommand(Message message, String... params) {
         return accountService.getAccount(message.getChatId());
     }
 }

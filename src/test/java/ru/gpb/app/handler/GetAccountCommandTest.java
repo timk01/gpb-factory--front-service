@@ -42,7 +42,6 @@ class GetAccountCommandTest {
         assertThat("/currentbalance").isEqualTo(result);
     }
 
-
     @Test
     public void executeCommandReturnedAccount() {
         Message mockedMessage = mock(Message.class);

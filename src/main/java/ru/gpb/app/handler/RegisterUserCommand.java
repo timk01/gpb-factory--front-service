@@ -5,6 +5,7 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import ru.gpb.app.dto.CreateUserRequest;
 import ru.gpb.app.service.UserService;
 
+@ExpectedCommandParams(0)
 @Component
 public class RegisterUserCommand implements Command {
 
@@ -20,7 +21,7 @@ public class RegisterUserCommand implements Command {
     }
 
     @Override
-    public String executeCommand(Message message) {
+    public String executeCommand(Message message, String... params) {
         CreateUserRequest request = new CreateUserRequest(message.getChatId(), message.getFrom().getUserName());
         return userService.register(request);
     }

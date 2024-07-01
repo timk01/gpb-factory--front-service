@@ -5,5 +5,5 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 public interface Command {
     String getBotCommand();
 
-    public String executeCommand(Message message);
+    String executeCommand(Message message, String... commandParams);
 }
