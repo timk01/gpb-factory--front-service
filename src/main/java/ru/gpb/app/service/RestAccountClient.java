@@ -7,7 +7,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 import ru.gpb.app.dto.AccountListResponse;
 import ru.gpb.app.dto.CreateAccountRequest;
-import ru.gpb.app.dto.CreateTransferRequest;
+import ru.gpb.app.dto.CreateTransferRequestDto;
 import ru.gpb.app.dto.CreateTransferResponse;
 
 @Service
@@ -38,7 +38,7 @@ public class RestAccountClient implements AccountClient {
 
 
     @Override
-    public ResponseEntity<CreateTransferResponse> makeAccountTransfer(CreateTransferRequest request) {
+    public ResponseEntity<CreateTransferResponse> makeAccountTransfer(CreateTransferRequestDto request) {
         log.info("Using WebClient for transferring money");
         return webClientService.makeAccountTransfer(request);
     }

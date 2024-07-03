@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpStatusCodeException;
 import ru.gpb.app.dto.AccountListResponse;
 import ru.gpb.app.dto.CreateAccountRequest;
-import ru.gpb.app.dto.CreateTransferRequest;
+import ru.gpb.app.dto.CreateTransferRequestDto;
 import ru.gpb.app.dto.CreateTransferResponse;
 
 import javax.validation.Valid;
@@ -131,7 +131,7 @@ public class AccountService {
         return "Произошла серьезная ошибка во время выполнения денежного перевода: " + generalErrorMessage;
     }
 
-    public String makeAccountTransfer(@Valid CreateTransferRequest request) {
+    public String makeAccountTransfer(@Valid CreateTransferRequestDto request) {
         try {
             log.info("Creating transfer from account1: {} to account2: {} with amount {}",
                     request.from(),

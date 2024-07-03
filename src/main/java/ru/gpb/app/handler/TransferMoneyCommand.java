@@ -3,7 +3,7 @@ package ru.gpb.app.handler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Message;
-import ru.gpb.app.dto.CreateTransferRequest;
+import ru.gpb.app.dto.CreateTransferRequestDto;
 import ru.gpb.app.service.AccountService;
 
 @ExpectedCommandParams(2)
@@ -42,8 +42,9 @@ public class TransferMoneyCommand implements Command {
         }
 
         return accountService.makeAccountTransfer(
-                new CreateTransferRequest(
+                new CreateTransferRequestDto(
                         message.getFrom().getUserName(),
+                        message.getFrom().getId(),
                         params[0],
                         transferDatum
                 )

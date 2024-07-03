@@ -34,7 +34,7 @@ class AccountServiceTest {
 
     private Long userId;
 
-    private CreateTransferRequest transferRequest;
+    private CreateTransferRequestDto transferRequest;
 
     @BeforeEach
     public void setUp() {
@@ -44,7 +44,7 @@ class AccountServiceTest {
                 "Khasmamedov",
                 "My first awesome account"
         );
-        transferRequest = new CreateTransferRequest("Khasmamedov", "Durov", "100");
+        transferRequest = new CreateTransferRequestDto("Khasmamedov", 878647670L,"Durov", "100");
     }
 
     @Test

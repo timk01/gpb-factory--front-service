@@ -9,7 +9,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpStatusCodeException;
-import ru.gpb.app.dto.CreateTransferRequest;
+import ru.gpb.app.dto.CreateTransferRequestDto;
 import ru.gpb.app.dto.CreateTransferResponse;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -25,12 +25,12 @@ class RestAccountClientWebClientTest {
     @InjectMocks
     private RestAccountClient accountClient;
 
-    private CreateTransferRequest transferRequest;
+    private CreateTransferRequestDto transferRequest;
     private CreateTransferResponse transferResponse;
 
     @BeforeEach
     public void setUp() {
-        transferRequest = new CreateTransferRequest("Khasmamedov", "Durov", "100");
+        transferRequest = new CreateTransferRequestDto("Khasmamedov", 878647670L, "Durov", "100");
         transferResponse = new CreateTransferResponse("12345");
     }
 

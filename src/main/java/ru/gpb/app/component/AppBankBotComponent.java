@@ -37,7 +37,7 @@ public class AppBankBotComponent extends TelegramLongPollingBot {
             try {
                 String fullUserCommandWithoutGaps = update.getMessage().getText().strip();
                 String command = fullUserCommandWithoutGaps.split(" ")[0];
-                String commandParams = fullUserCommandWithoutGaps.substring(command.length()).strip();
+                String[] commandParams = fullUserCommandWithoutGaps.substring(command.length()).strip().split(" ");
 
                 SendMessage message = outcomingHandler.outputtingMessageSender(update.getMessage(), command, commandParams);
                 execute(message);

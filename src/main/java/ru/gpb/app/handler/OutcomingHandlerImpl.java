@@ -21,7 +21,7 @@ public class OutcomingHandlerImpl implements OutcomingHandler {
     }
 
     @Override
-    public SendMessage outputtingMessageSender(Message message, String command, String commandParams) {
+    public SendMessage outputtingMessageSender(Message message, String command, String... commandParams) {
                 String response;
                 if (messageMap.containsKey(command)) {
                     response = paramsChecker.commandParamsCheck(messageMap.get(command), message, commandParams);

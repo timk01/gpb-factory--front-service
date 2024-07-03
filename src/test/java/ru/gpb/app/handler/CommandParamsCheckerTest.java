@@ -7,7 +7,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.User;
-import ru.gpb.app.dto.CreateTransferRequest;
+import ru.gpb.app.dto.CreateTransferRequestDto;
 import ru.gpb.app.dto.CreateUserRequest;
 import ru.gpb.app.service.AccountService;
 import ru.gpb.app.service.UserService;
@@ -70,11 +70,13 @@ class CommandParamsCheckerTest {
     public void checkerReturnedProperDataWhenWePutAnnotationWithSeveralParams() {
         User user = new User();
         user.setUserName("Khasmamedov");
+        user.setId(878647670L);
 
         when(message.getFrom()).thenReturn(user);
 
-        CreateTransferRequest request = new CreateTransferRequest(
+        CreateTransferRequestDto request = new CreateTransferRequestDto(
                 "Khasmamedov",
+                878647670L,
                 "paveldurov",
                 "203605.20"
         );

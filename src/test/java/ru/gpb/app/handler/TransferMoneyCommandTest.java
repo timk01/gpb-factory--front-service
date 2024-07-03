@@ -10,7 +10,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.User;
-import ru.gpb.app.dto.CreateTransferRequest;
+import ru.gpb.app.dto.CreateTransferRequestDto;
 import ru.gpb.app.service.AccountService;
 import ru.gpb.app.dto.Error;
 
@@ -31,7 +31,7 @@ class TransferMoneyCommandTest {
 
     private String[] transferData;
 
-    private CreateTransferRequest request;
+    private CreateTransferRequestDto request;
 
     private User user;
 
@@ -44,10 +44,10 @@ class TransferMoneyCommandTest {
         transferData = new String[]{"paveldurov", "203605.20"};
 
         user = new User();
-        user.setId(123L);
+        user.setId(878647670L);
         user.setUserName("Khasmamedov");
 
-        request = new CreateTransferRequest("Khasmamedov", "paveldurov", "203605.20");
+        request = new CreateTransferRequestDto("Khasmamedov", 878647670L, "paveldurov", "203605.20");
     }
 
     @Test
