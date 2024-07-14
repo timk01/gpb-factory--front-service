@@ -9,7 +9,7 @@
 ![Static Badge](https://img.shields.io/badge/Spring%20Boot-darkgreen)
 ![Static Badge](https://img.shields.io/badge/%D0%91%D0%94%3A%20Postgres-purple)
 ![Static Badge](https://img.shields.io/badge/Tests:Junit%20%2B%20Mockito-red)
-![Static Badge](https://img.shields.io/badge/Git-green)  
+![Static Badge](https://img.shields.io/badge/Git-green)
 ![Static Badge](https://img.shields.io/badge/Docker-green)
 
 ### Базовое верхнеуровневое представление:  
