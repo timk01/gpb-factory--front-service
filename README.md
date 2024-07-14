@@ -23,7 +23,7 @@
   <br/><br/>
   3. Второй слой, или БД (аналог ДАО) - служит для хранения и обработки данных
   <br/><br/>
-  <b><a href="https://gpb.fut.ru/itfactory/backend?utm_source=gpb&utm_medium=expert&utm_campaign=recommend&utm_content=all">GBP IT-factory</a></b> | <b><a href="">Документация(_пока пуста_)</a></b> | <b><a href="https://github.com/gpb-it-factory/khasmamedov-telergam-bot">GitHub</a></b>  
+  <b><a href="https://gpb.fut.ru/itfactory/backend?utm_source=gpb&utm_medium=expert&utm_campaign=recommend&utm_content=all">GBP IT-factory</a></b> | <b><a href="">Документация(_пока пуста_)</a></b> | <b><a href="https://github.com/timk01/gpb-factory--front-service">GitHub</a></b>  
   
   <br><b><a href="https://drive.google.com/file/d/14S_0n9yuo8Dy8iYNX1Wuj-FBkEe3cQjU/view?usp=sharing">Команды телеграмма (видео)</a></b>  
   <b><a href="https://drive.google.com/file/d/1mmVy7ehMOOdXLM_ZveQRFHxUR8fLNNKB/view?usp=sharing">Архитектура приложения (видео)</a></b>  
@@ -31,7 +31,7 @@
   <b><a href="#Как_запустить_и_начать_работу">Запуск и начало работы</a></b> <br>
   <b><a href="#Команды_бота">Команды_бота</a></b>
   <br/><br/>
-  <a target="_blank" href="https://github.com/gpb-it-factory/khasmamedov-telergam-bot"><img src="https://img.shields.io/github/last-commit/gpb-it-factory/khasmamedov-telergam-bot?logo=github&color=609966&logoColor=fff" alt="Last commit"/></a>
+  <a target="_blank" href="https://github.com/timk01/gpb-factory--front-service"><img src="https://img.shields.io/github/last-commit/gpb-it-factory/khasmamedov-telergam-bot?logo=github&color=609966&logoColor=fff" alt="Last commit"/></a>
   <br/><br/>
 
 ### Весь проект на диаграмме ниже:
@@ -93,7 +93,7 @@ deactivate Telegram
 <details>
   <summary>Получение проекта</summary>
 
-* Скачать проект с репозитория выше целиком [перейдя по ссылке на гитхаб](https://github.com/gpb-it-factory/khasmamedov-middle-service)    
+* Скачать проект с репозитория выше целиком [перейдя по ссылке на гитхаб](https://github.com/timk01/gpb-factory--front-service)    
   ````code -> download zip````    
   Распаковать архив, добавить в среду разработки как новый проект
 * Либо, склонировать его      
