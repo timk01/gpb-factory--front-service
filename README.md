@@ -1,5 +1,3 @@
-![img.png](images/img.png)
-
 <h1 align="center"> khasmamedov-telegram-bot </h1>
 
 <h1 align="center"> Банковское приложение с телеграмм-ботом и начинкой на java, c внешним хранилищем данных</h1>
@@ -24,7 +22,7 @@
   <br/><br/>
   3. Второй слой, или БД (аналог ДАО) - служит для хранения и обработки данных
   <br/><br/>
-  <b><a href="https://gpb.fut.ru/itfactory/backend?utm_source=gpb&utm_medium=expert&utm_campaign=recommend&utm_content=all">GBP IT-factory</a></b> | <b><a href="">Документация(_пока пуста_)</a></b> | <b><a href="https://github.com/timk01/gpb-factory--front-service">GitHub</a></b>  
+  <b><a href="">Документация(_пока пуста_)</a></b> | <b><a href="https://github.com/timk01/gpb-factory--front-service">GitHub</a></b>  
   
   <br><b><a href="https://drive.google.com/file/d/14S_0n9yuo8Dy8iYNX1Wuj-FBkEe3cQjU/view?usp=sharing">Команды телеграмма (видео)</a></b>  
   <b><a href="https://drive.google.com/file/d/1mmVy7ehMOOdXLM_ZveQRFHxUR8fLNNKB/view?usp=sharing">Архитектура приложения (видео)</a></b>  
